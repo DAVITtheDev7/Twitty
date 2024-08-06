@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:twitty/components/my_settings_tile.dart';
 import 'package:twitty/themes/theme_provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -20,18 +21,21 @@ class _HomePageState extends State<SettingsPage> {
         centerTitle: true,
         foregroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Column(children: [
-        ListTile(
-          title: const Text("Dark Mode"),
-          trailing: CupertinoSwitch(
-            onChanged: (value) {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            },
-            value:
-                Provider.of<ThemeProvider>(context, listen: false).isDarkMode,
+      body: Column(
+        children: [
+          MySettingsTile(
+            title: "Dark Mode",
+            action: CupertinoSwitch(
+              onChanged: (value) {
+                Provider.of<ThemeProvider>(context, listen: false)
+                    .toggleTheme();
+              },
+              value:
+                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode,
+            ),
           ),
-        )
-      ]),
+        ],
+      ),
     );
   }
 }
