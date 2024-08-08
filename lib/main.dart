@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitty/firebase_options.dart';
 import 'package:twitty/services/auth/auth_gate.dart';
+import 'package:twitty/services/database/database_provider.dart';
 import 'package:twitty/themes/theme_provider.dart';
 
 void main() async {
@@ -10,9 +11,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => DataBaseProvider())
+      ],
       child: const MyApp(),
     ),
   );

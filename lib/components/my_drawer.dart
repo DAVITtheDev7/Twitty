@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twitty/components/my_drawer_tile.dart';
+import 'package:twitty/pages/profile_page.dart';
 import 'package:twitty/pages/settings_page.dart';
 import 'package:twitty/services/auth/auth_service.dart';
 
@@ -45,7 +46,17 @@ class MyDrawer extends StatelessWidget {
               MyDrawerTile(
                 title: "P R O F I L E",
                 icon: Icons.person,
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(
+                        uid: _auth.getCurrentUid(),
+                      ),
+                    ),
+                  );
+                },
               ),
               MyDrawerTile(
                 title: "S E A R C H",
@@ -56,6 +67,7 @@ class MyDrawer extends StatelessWidget {
                 title: "S E T T I G S",
                 icon: Icons.settings,
                 onTap: () {
+                  Navigator.of(context).pop();
                   Navigator.push(
                     context,
                     MaterialPageRoute(

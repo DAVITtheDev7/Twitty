@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await _auth.loginEmailPassword(_emailController.text, _pwController.text);
-      if (mounted) hideLoadingCircle(context);
+      hideLoadingCircle(context);
     } catch (e) {
       if (mounted) hideLoadingCircle(context);
       // ignore: use_build_context_synchronously

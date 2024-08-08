@@ -3,9 +3,11 @@ import 'package:twitty/components/my_button.dart';
 import 'package:twitty/components/my_loading_circle.dart';
 import 'package:twitty/components/my_textfield.dart';
 import 'package:twitty/services/auth/auth_service.dart';
+import 'package:twitty/services/database/database_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
+
   const RegisterPage({
     super.key,
     this.onTap,
@@ -17,6 +19,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final AuthService _auth = AuthService();
+  final DataBaseService _db = DataBaseService(); // Corrected variable name
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -30,14 +33,12 @@ class _RegisterPageState extends State<RegisterPage> {
         _confirmPwController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            "Empty Fields Are Not Allowed!",
-          ),
+          content: Text("Empty Fields Are Not Allowed!"),
         ),
       );
     } else {
       if (_pwController.text == _confirmPwController.text) {
-        showLoadingCircle(context);
+        if (mounted) showLoadingCircle(context);
 
         try {
           await _auth.registerEmailPassword(
@@ -45,33 +46,50 @@ class _RegisterPageState extends State<RegisterPage> {
             _pwController.text,
           );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.green[400],
-              content: const Text("Registered Succesfully"),
-            ),
+          if (mounted) {
+            hideLoadingCircle(context);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.green[400],
+                content: const Text("Registered Successfully"),
+              ),
+            );
+          }
+
+          await _db.saveUserInfoInFirebase(
+            name: _nameController.text,
+            email: _emailController.text,
           );
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                e.toString(),
+          if (mounted) hideLoadingCircle(context);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(e.toString()),
               ),
-            ),
-          );
+            );
+          }
         } finally {
           if (mounted) hideLoadingCircle(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              "Passwords do not match!",
-            ),
+            content: Text("Passwords do not match!"),
           ),
         );
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _pwController.dispose();
+    _confirmPwController.dispose();
+    super.dispose();
   }
 
   @override
